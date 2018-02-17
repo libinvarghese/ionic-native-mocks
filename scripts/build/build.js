@@ -20,6 +20,7 @@ const ROOT = path.resolve(path.join(__dirname, '../../')), // root ionic-native 
 const ANGULAR_VERSION = '*',
   RXJS_VERSION = '^5.0.1',
   MIN_CORE_VERSION = '^4.1.0',
+  MIN_MOCKS_CORE_VERSION = '^2.0.7',
   IONIC_NATIVE_VERSION = require(path.resolve(ROOT, 'package.json')).version;
 
 // package dependencies
@@ -28,6 +29,7 @@ const CORE_PEER_DEPS = {
 };
 
 const PLUGIN_PEER_DEPS = {
+  '@ionic-native-mocks/core': MIN_MOCKS_CORE_VERSION,
   '@ionic-native/core': MIN_CORE_VERSION,
   '@angular/core': ANGULAR_VERSION,
   'rxjs': RXJS_VERSION
