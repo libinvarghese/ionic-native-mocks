@@ -1,7 +1,8 @@
 import { Network } from '@ionic-native/network';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import 'rxjs/add/observable/merge';
+import { never } from 'rxjs/observable/never';
+import { merge } from 'rxjs/observable/merge';
 
 export class NetworkMock extends Network {
     /**
@@ -20,29 +21,22 @@ export class NetworkMock extends Network {
      * @return {Observable<any>}
      */
     onchange(): Observable<any> {
-        return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
-        });
-    };
+        return merge(this.onConnect(), this.onDisconnect());
+    }
     /**
      * Get notified when the device goes offline
      * @returns {Observable<any>} Returns an observable.
      */
     onDisconnect(): Observable<any> {
-        return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
-        });
-    };
+        return never();
+    }
     /**
      * Get notified when the device goes online
      * @returns {Observable<any>} Returns an observable.
      */
     onConnect(): Observable<any> {
         return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
+            observer.next(null);
         });
-    };
+    }
 }
