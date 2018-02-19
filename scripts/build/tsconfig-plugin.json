@@ -9,7 +9,7 @@
     "moduleResolution": "node",
     "outDir": "../../../dist/@ionic-native-mocks/",
     "paths": {
-      "@ionic-native/core": ["../../../dist/@ionic-native-mocks/core"]
+      "@ionic-native-mocks/core": ["../../../dist/@ionic-native-mocks/core"]
     },
     "rootDir": "../../../src/@ionic-native-mocks/plugins/",
     "target": "es5",

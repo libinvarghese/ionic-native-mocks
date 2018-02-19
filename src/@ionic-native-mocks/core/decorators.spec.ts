@@ -1,7 +1,14 @@
 import 'core-js';
-import { Plugin, Cordova, CordovaProperty, CordovaCheck, CordovaInstance, InstanceProperty } from './decorators';
-import { IonicNativePlugin } from './ionic-native-plugin';
-import { ERR_CORDOVA_NOT_AVAILABLE, ERR_PLUGIN_NOT_INSTALLED } from './plugin';
+import {
+  IonicNativePlugin,
+  Plugin,
+  Cordova,
+  CordovaProperty,
+  CordovaCheck,
+  CordovaInstance,
+  InstanceProperty,
+} from '@ionic-native/core';
+import { MockCordovaProperty } from './decorators';
 import { Observable } from 'rxjs/Observable';
 
 declare const window: any;
@@ -77,89 +84,24 @@ function definePlugin() {
   };
 }
 
-describe('Regular Decorators', () => {
+class MockTestPlugin extends TestPlugin {
+  @MockCordovaProperty('Mock Value')
+  name: string;
+}
 
-  let plugin: TestPlugin;
+describe('Mock Cordova Property', () => {
+
+  let plugin: MockTestPlugin;
 
   beforeEach(() => {
-    plugin = new TestPlugin();
+    plugin = new MockTestPlugin();
     definePlugin();
   });
 
-  describe('Plugin', () => {
-
-    it('should set pluginName', () => {
-      expect(TestPlugin.getPluginName()).toEqual('TestPlugin');
-    });
-
-    it('should set pluginRef', () => {
-      expect(TestPlugin.getPluginRef()).toEqual('testPlugin');
-    });
-
-    it('should return original plugin object', () => {
-      expect(TestPlugin.getPlugin()).toEqual(window.testPlugin);
-    });
-
-    it('should return supported platforms', () => {
-      expect(TestPlugin.getSupportedPlatforms()).toEqual(['Android', 'iOS']);
-    });
-
-  });
-
-  describe('Cordova', () => {
-
-    it('should do a sync function', () => {
-      expect(plugin.pingSync()).toEqual('pong');
-    });
-
-    it('should do an async function', (done: Function) => {
-      plugin.ping()
-        .then(res => {
-          expect(res).toEqual('pong');
-          done();
-        })
-        .catch(e => {
-          expect(e).toBeUndefined();
-          done('Method should have resolved');
-        });
-    });
-
-    it('should throw plugin_not_installed error', (done: Function) => {
-
-      delete window.testPlugin;
-      window.cordova = true;
-
-      expect(<any>plugin.pingSync()).toEqual(ERR_PLUGIN_NOT_INSTALLED);
-
-      plugin.ping()
-        .catch(e => {
-          expect(e).toEqual(ERR_PLUGIN_NOT_INSTALLED.error);
-          delete window.cordova;
-          done();
-        });
-
-    });
-
-    it('should throw cordova_not_available error', (done: Function) => {
-
-      delete window.testPlugin;
-
-      expect(<any>plugin.pingSync()).toEqual(ERR_CORDOVA_NOT_AVAILABLE);
-
-      plugin.ping()
-        .catch(e => {
-          expect(e).toEqual(ERR_CORDOVA_NOT_AVAILABLE.error);
-          done();
-        });
-
-    });
-
-  });
-
-  describe('CordovaProperty', () => {
+  describe('MockCordovaProperty', () => {
 
     it('should return property value', () => {
-      expect(plugin.name).toEqual('John Smith');
+      expect(plugin.name).toEqual('Mock Value');
     });
 
     it('should set property value', () => {
@@ -168,110 +110,4 @@ describe('Regular Decorators', () => {
     });
 
   });
-
-  describe('CordovaCheck', () => {
-
-    it('should run the method when plugin exists', (done) => {
-      plugin.customPing()
-        .then(res => {
-          expect(res).toEqual('pong');
-          done();
-        });
-    });
-
-    it('shouldnt run the method when plugin doesnt exist', (done) => {
-      delete window.testPlugin;
-      window.cordova = true;
-      plugin.customPing()
-        .catch(e => {
-          expect(e).toEqual(ERR_PLUGIN_NOT_INSTALLED.error);
-          done();
-        });
-    });
-
-  });
-
-  describe('CordovaOptions', () => {
-
-    describe('destruct', () => {
-
-      it('should destruct values returned by a Promise', (done) => {
-        plugin.destructPromise()
-          .then((args: any[]) => {
-            expect(args).toEqual(['hello', 'world']);
-            done();
-          });
-      });
-
-      it('should destruct values returned by an Observable', (done) => {
-        plugin.destructObservable()
-          .subscribe((args: any[]) => {
-            expect(args).toEqual(['hello', 'world']);
-            done();
-          });
-      });
-
-    });
-
-  });
-
-});
-
-describe('Instance Decorators', () => {
-
-  let instance: TestObject,
-    plugin: TestPlugin;
-
-  beforeEach(() => {
-    definePlugin();
-    plugin = new TestPlugin();
-    instance = plugin.create();
-  });
-
-  describe('Instance plugin', () => {
-
-
-
-  });
-
-  describe('CordovaInstance', () => {
-
-    it('should call instance async method', (done) => {
-      instance.ping()
-        .then(r => {
-          expect(r).toEqual('pong');
-          done();
-        });
-    });
-
-    it('should call instance sync method', () => {
-      expect(instance.pingSync()).toEqual('pong');
-    });
-
-    it('shouldnt call instance method when _objectInstance is undefined', () => {
-
-      delete instance._objectInstance;
-      instance.ping()
-        .then(r => {
-          expect(r).toBeUndefined();
-        })
-        .catch(e => {
-          expect(e).toBeUndefined();
-        });
-
-    });
-
-  });
-
-  describe('InstanceProperty', () => {
-    it('should return property value', () => {
-      expect(instance.name).toEqual('John Smith');
-    });
-
-    it('should set property value', () => {
-      instance.name = 'John Cena';
-      expect(instance.name).toEqual('John Cena');
-    });
-  });
-
 });

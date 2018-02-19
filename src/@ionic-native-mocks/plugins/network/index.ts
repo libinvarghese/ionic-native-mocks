@@ -1,15 +1,39 @@
 import { Network } from '@ionic-native/network';
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
-import 'rxjs/add/observable/merge';
+import { never } from 'rxjs/observable/never';
+import { merge } from 'rxjs/observable/merge';
+import { MockCordovaProperty } from '@ionic-native-mocks/core';
+import { Subject } from 'rxjs';
 
 export class NetworkMock extends Network {
+    private _onDisconnect = new Subject();
+    private _onConnect = new Subject();
     /**
-     * Connection type 
+     * Connection type
      * The `type` property will return one of the following connection types: `unknown`, `ethernet`, `wifi`, `2g`, `3g`, `4g`, `cellular`, `none`
      * @return {string}
      */
-    type: string = 'cellular';
+    private __type: string;
+
+    constructor() {
+      super();
+      this.type = 'cellular';
+    }
+
+    get type(): string {
+        return this.__type;
+    };
+    set type(t: string) {
+        if (this.__type !== t) {
+            this.__type = t;
+            if (t === 'none') {
+                this._onDisconnect.next(null);
+            } else {
+                this._onConnect.next(null);
+            }
+        }
+    }
     /**
      * Downlink Max Speed
      * @return {string}
@@ -20,29 +44,20 @@ export class NetworkMock extends Network {
      * @return {Observable<any>}
      */
     onchange(): Observable<any> {
-        return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
-        });
-    };
+        return merge(this.onConnect(), this.onDisconnect());
+    }
     /**
      * Get notified when the device goes offline
      * @returns {Observable<any>} Returns an observable.
      */
     onDisconnect(): Observable<any> {
-        return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
-        });
-    };
+        return this._onDisconnect.asObservable();
+    }
     /**
      * Get notified when the device goes online
      * @returns {Observable<any>} Returns an observable.
      */
     onConnect(): Observable<any> {
-        return Observable.create( (observer: Observer<any>) => {
-            observer.next('');
-            observer.complete();
-        });
-    };
+        return this._onConnect.asObservable();
+    }
 }
