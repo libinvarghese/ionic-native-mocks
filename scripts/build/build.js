@@ -19,12 +19,14 @@ const ROOT = path.resolve(path.join(__dirname, '../../')), // root ionic-native 
 // dependency versions
 const ANGULAR_VERSION = '*',
   RXJS_VERSION = '^5.0.1',
+  DELAY_VERSION = '^2.0.0',
   MIN_CORE_VERSION = '^4.1.0',
   MIN_MOCKS_CORE_VERSION = '^2.0.7',
   IONIC_NATIVE_VERSION = require(path.resolve(ROOT, 'package.json')).version;
 
 // package dependencies
 const CORE_PEER_DEPS = {
+  'delay': DELAY_VERSION,
   'rxjs': RXJS_VERSION
 };
 
