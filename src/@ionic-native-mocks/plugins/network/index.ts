@@ -1,9 +1,6 @@
 import { Network } from '@ionic-native/network';
 import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs/Observer';
-import { never } from 'rxjs/observable/never';
 import { merge } from 'rxjs/observable/merge';
-import { MockCordovaProperty } from '@ionic-native-mocks/core';
 import { Subject } from 'rxjs';
 
 export class NetworkMock extends Network {
