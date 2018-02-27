@@ -76,20 +76,21 @@ export class StreamingMediaMock extends StreamingMedia {
     unwatch(event: string): void {};
 
     private startPlaying() {
-        delay(1000).then(() => {
+        delay(3000).then(() => {
             this.loadState$.next(StreamingMedia.LoadState.MPMovieLoadStatePlayable);
             return delay(1000);
         }).then(() => {
             this.loadState$.next(
                 StreamingMedia.LoadState.MPMovieLoadStatePlayable |
                 StreamingMedia.LoadState.MPMovieLoadStatePlaythroughOK);
+            return delay(500);
         }).then(() => {
             this.playbackState$.next(
                 StreamingMedia.PlaybackState.MPMoviePlaybackStatePlaying);
         });
     }
     private stopPlaying() {
-        delay(10).then(() => {
+        delay(100).then(() => {
             this.playbackState$.next(
                 StreamingMedia.PlaybackState.MPMoviePlaybackStateStopped);
         }).then(() => {
